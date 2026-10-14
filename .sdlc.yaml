@@ -1,0 +1,11 @@
+agents:
+  planner:
+    harness: codex
+    triggers:
+      - event: issues
+        action: labeled
+        label: "ai-plan"
+    instructions: |
+      Read the issue and
+      post a short implementation plan as a comment on the issue.
+      Include acceptance criteria and suggested tests.

@@ -9,3 +9,45 @@ agents:
       Read the issue and
       post a short implementation plan as a comment on the issue.
       Include acceptance criteria and suggested tests.
+
+  # Checks git over HTTPS through the egress gateway with the platform
+  # identity, the default on github.com (airohq/agentic-sdlc#107).
+  git-pusher:
+    harness: claude
+    network:
+      allowed: [github]
+    triggers:
+      - event: issues
+        action: labeled
+        label: "test-git-push"
+    instructions: |
+      Test git access over HTTPS. Run these commands in a shell and report the
+      exact output of each, including errors, in one comment on the issue:
+      1. git clone https://github.com/ernoaapa/demo-agentic-sdlc.git /tmp/repo
+      2. In /tmp/repo: create branch auth-test-push-<issue number>, add a file
+         auth-test.txt containing the issue number, commit it and run
+         git push origin HEAD.
+      Don't use the GitHub MCP tools for these steps, only git.
+
+  # Checks that auth none reaches github.com anonymously: clones work, pushes
+  # are rejected.
+  git-anon:
+    harness: claude
+    network:
+      allowed: [github]
+    auth:
+      github.com: none
+    triggers:
+      - event: issues
+        action: labeled
+        label: "test-git-anon"
+    instructions: |
+      Test anonymous git access over HTTPS. Run these commands in a shell and
+      report the exact output of each, including errors, in one comment on
+      the issue:
+      1. git clone https://github.com/ernoaapa/demo-agentic-sdlc.git /tmp/repo
+      2. In /tmp/repo: create branch auth-test-anon-<issue number>, add a file
+         auth-test.txt containing the issue number, commit it and run
+         git push origin HEAD.
+      A failed push is expected. Don't use the GitHub MCP tools for these
+      steps, only git.
